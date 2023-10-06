@@ -1,5 +1,5 @@
 
-
+from flask_migrate import Migrate
 from flask import Flask 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -9,6 +9,7 @@ app = Flask(__name__, template_folder='templates')
 # Configure the database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///library.db'
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 from project.main.views import main_blueprint
 from project.loaners.views import loaners_blueprint
 from project.books.views import books_blueprint
