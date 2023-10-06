@@ -1,7 +1,6 @@
 
 from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from project import db
 
 # Define the Loaner class for the 'loaner' table in the database
 class Loaner(db.Model):

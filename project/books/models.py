@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
+from project import db
 
-db = SQLAlchemy()
 
 class Book(db.Model):
     id = db.Column(db.Integer, primary_key=True)

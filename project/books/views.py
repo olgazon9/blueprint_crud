@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
-from .models import db, Book
+from .models import  Book
+from project import db
 
 books_blueprint = Blueprint('books', __name__)
 # Books CRUD operations

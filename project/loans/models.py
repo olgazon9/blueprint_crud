@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
+from project import db
 
-db = SQLAlchemy()
 
 # Define the Loan class for the 'loan' table in the database
 class Loan(db.Model):

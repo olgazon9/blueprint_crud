@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
-from .models import db, Loaner
+from .models import  Loaner
+from project import db
 
 loaners_blueprint = Blueprint('loaners', __name__)
 

@@ -1,7 +1,10 @@
 from flask import Blueprint, request, jsonify
-from .models import db, Loan
+from .models import  Loan
 from datetime import datetime, timedelta
+from project import db
+
 loans_blueprint = Blueprint('loans', __name__)
+
 
 # Loans CRUD operations
 @loans_blueprint.route('/loans', methods=['GET'])
