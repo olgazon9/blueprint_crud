@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Book Library</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <h1>Welcome to the Book Library</h1>
+    <button id="addBookButton">Add a Book</button>
+
+    <div id="bookFormContainer" style="display: none;">
+        <form id="bookForm">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required><br>
+
+            <label for="author">Author:</label>
+            <input type="text" id="author" name="author" required><br>
+
+            <label for="publication_year">Publication Year:</label>
+            <input type="number" id="publication_year" name="publication_year" required><br>
+
+            <label for="genre">Genre:</label>
+            <input type="text" id="genre" name="genre" required><br>
+
+            <button type="submit">Create Book</button>
+        </form>
+        <div id="message"></div>
+    </div>
+    <!-- Button to toggle book list visibility -->
+    <button id="toggleBooksButton">Show Books</button>
+
+    <div id="bookList" style="display: none;">
+        <!-- This is where the book list will be displayed -->
+    </div>
+   <!-- Button to toggle search visibility -->
+   <button id="toggleSearchButton">Toggle Search</button>
+   </div>
+    <!-- Search form -->
+    <form id="searchForm">
+        <label for="searchQuery">Search for Books:</label>
+        <input type="text" id="searchQuery" name="q" required>
+        <button type="submit">Search</button>
+    </form>
+
+    <div id="searchResults" style="display: none;">
+        <!-- This is where the search results will be displayed -->
+    </div>
+
+    <script>
+        const addBookButton = document.getElementById("addBookButton");
+        const bookFormContainer = document.getElementById("bookFormContainer");
+
+        addBookButton.addEventListener("click", function () {
+            bookFormContainer.style.display = "block";
+        });
+
+        document.getElementById("bookForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const title = document.getElementById("title").value;
+            const author = document.getElementById("author").value;
+            const publication_year = document.getElementById("publication_year").value;
+            const genre = document.getElementById("genre").value;
+
+            const bookData = {
+                title: title,
+                author: author,
+                publication_year: publication_year,
+                genre: genre
+            };
+
+            axios.post('/books/books', bookData)
+                .then(function (response) {
+                    document.getElementById("message").textContent = response.data.message;
+                    // Hide the form and show the success message
+                    bookFormContainer.style.display = "none";
+                    document.getElementById("message").style.display = "block";
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        });
+
+        const toggleBooksButton = document.getElementById("toggleBooksButton");
+        const bookList = document.getElementById("bookList");
+        let booksVisible = false; // Track the visibility state
+
+        // Function to toggle book list visibility
+        function toggleBookList() {
+            if (booksVisible) {
+                bookList.style.display = "none";
+                toggleBooksButton.textContent = "Show Books";
+            } else {
+                bookList.style.display = "block";
+                toggleBooksButton.textContent = "Hide Books";
+            }
+            booksVisible = !booksVisible; // Toggle the visibility state
+        }
+
+        toggleBooksButton.addEventListener("click", function () {
+            if (booksVisible) {
+                // If books are visible, hide them
+                toggleBookList();
+            } else {
+                // If books are not visible, fetch and display them
+                axios.get('/books/books')
+                    .then(function (response) {
+                        const books = response.data.books;
+                        const bookListHTML = books.map(book => `
+                            <div>
+                                <strong>Title:</strong> ${book.title}<br>
+                                <strong>Author:</strong> ${book.author}<br>
+                                <strong>Publication Year:</strong> ${book.publication_year}<br>
+                                <strong>Genre:</strong> ${book.genre}<br>
+                                <button onclick="deleteBook(${book.id})">Delete</button>
+                            </div>
+                            <hr>
+                        `).join('');
+
+                        bookList.innerHTML = bookListHTML;
+                        toggleBookList();
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                    });
+            }
+        });
+
+        // Function to delete a book by its ID
+        function deleteBook(bookId) {
+            axios.delete(`/books/books/${bookId}`)
+                .then(function (response) {
+                    // Book deleted successfully, refresh the book list
+                    toggleBooksButton.click(); // Simulate a click to refresh the list
+                    console.log(response.data.message);
+                })
+                .catch(function (error) {
+                    console.error(error);
+               })}
+               const toggleSearchButton = document.getElementById("toggleSearchButton");
+        const searchForm = document.getElementById("searchForm");
+        const searchResults = document.getElementById("searchResults");
+
+        let searchVisible = false; // Track the visibility state
+
+        // Function to toggle search visibility
+        function toggleSearch() {
+            if (searchVisible) {
+                searchForm.style.display = "none";
+                searchResults.style.display = "none";
+                toggleSearchButton.textContent = "Show Search";
+            } else {
+                searchForm.style.display = "block";
+                toggleSearchButton.textContent = "Hide Search";
+            }
+            searchVisible = !searchVisible; // Toggle the visibility state
+        }
+
+        toggleSearchButton.addEventListener("click", function () {
+            toggleSearch();
+        });
+
+        searchForm.addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const query = searchQuery.value;
+
+            axios.get(`books/search-books?q=${query}`)
+                .then(function (response) {
+                    const searchResultsData = response.data.search_results;
+                    const searchResultsHTML = searchResultsData.map(result => `
+                        <div>
+                            <strong>Title:</strong> ${result.title}<br>
+                            <strong>Author:</strong> ${result.author}<br>
+                            <strong>Publication Year:</strong> ${result.publication_year}<br>
+                            <strong>Genre:</strong> ${result.genre}<br>
+                        </div>
+                        <hr>
+                    `).join('');
+
+                    searchResults.innerHTML = searchResultsHTML;
+                    searchResults.style.display = "block";
+                })
+                .catch(function (error) {
+                    console.error(error);
+                });
+        });
+        </script>
+</body>
+
+</html>
