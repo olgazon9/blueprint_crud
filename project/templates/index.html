@@ -8,7 +8,8 @@
 
 <body>
     <h1>Welcome to the Book Library</h1>
-    <button id="addBookButton">Add a Book</button>
+    <h2>Books</h2>
+    <button id="addBookButton">Add a Book</button><br>
 
     <div id="bookFormContainer" style="display: none;">
         <form id="bookForm">
@@ -29,7 +30,7 @@
         <div id="message"></div>
     </div>
     <!-- Button to toggle book list visibility -->
-    <button id="toggleBooksButton">Show Books</button>
+    <button id="toggleBooksButton">Show Books</button><br>
 
     <div id="bookList" style="display: none;">
         <!-- This is where the book list will be displayed -->
@@ -47,9 +48,11 @@
     <div id="searchResults" style="display: none;">
         <!-- This is where the search results will be displayed -->
     </div>
+
     <br>
+    <h2>Loaners</h2> <br>
     <!-- Button to toggle the form visibility -->
-    <button id="showFormButton">Create Loaner</button>
+    <button id="showFormButton">Create Loaner</button><br>
     
     <!-- Loaner creation form (initially hidden) -->
     <form id="loanerForm" style="display: none;">
@@ -62,7 +65,7 @@
         <button type="submit">Create Loaner</button>
     </form>
     <!-- Button to fetch and display all loaners -->
-    <button id="showLoanersButton">Show All Loaners</button>
+    <button id="showLoanersButton">Show All Loaners</button><br>
     
     <!-- Container to display loaners -->
     <div id="loanersList" style="display: none;"></div>
@@ -264,6 +267,42 @@
     </script>
     <!-- script for loaners  -->
     <script>
+        // Function to fetch and display all loaners
+function fetchAndDisplayLoaners() {
+    axios.get('/loaners/loaners') // Adjust the URL to match your Flask route
+        .then(function (response) {
+            const loaners = response.data.loaners; // Access the 'loaners' data from the response
+            const loanersListContainer = document.getElementById("loanersList");
+
+            // Clear the existing content and show the container
+            loanersListContainer.innerHTML = "";
+            loanersListContainer.style.display = "block";
+
+                 // Create a list of loaners using the map function
+                 const loanersList = loaners.map(function (loaner) {
+                const deleteButton = `<button onclick="deleteLoaner(${loaner.id})">Delete</button>`;
+                const editButton = `<button onclick="editLoaner(${loaner.id}, '${loaner.name}', '${loaner.contact}')">Edit</button>`;
+                return `<div key=${loaner.id}>
+                    <p><strong>Name:</strong> ${loaner.name}</p>
+                    <p><strong>Contact:</strong> ${loaner.contact}</p>
+                    ${deleteButton} ${editButton}
+                </div>`;
+            });
+
+            // Add the loaners list to the container
+            loanersListContainer.innerHTML = loanersList.join('');
+        })
+        .catch(function (error) {
+            console.error(error);
+            alert("An error occurred while fetching loaners.");
+        });
+}
+
+// Event listener for the "Show All Loaners" button
+document.getElementById("showLoanersButton").addEventListener("click", function () {
+    fetchAndDisplayLoaners();
+});
+
 
         // Function to toggle the form visibility
         function toggleFormVisibility() {
