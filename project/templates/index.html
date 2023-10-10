@@ -47,7 +47,26 @@
     <div id="searchResults" style="display: none;">
         <!-- This is where the search results will be displayed -->
     </div>
-
+    <br>
+    <!-- Button to toggle the form visibility -->
+    <button id="showFormButton">Create Loaner</button>
+    
+    <!-- Loaner creation form (initially hidden) -->
+    <form id="loanerForm" style="display: none;">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required><br><br>
+        
+        <label for="contact">Contact:</label>
+        <input type="text" id="contact" name="contact" required><br><br>
+        
+        <button type="submit">Create Loaner</button>
+    </form>
+    <!-- Button to fetch and display all loaners -->
+    <button id="showLoanersButton">Show All Loaners</button>
+    
+    <!-- Container to display loaners -->
+    <div id="loanersList" style="display: none;"></div>
+    <!-- script for books  -->
     <script>
         const addBookButton = document.getElementById("addBookButton");
         const bookFormContainer = document.getElementById("bookFormContainer");
@@ -242,6 +261,39 @@
                     console.error(error);
                 });
         });
+    </script>
+    <!-- script for loaners  -->
+    <script>
+
+        // Function to toggle the form visibility
+        function toggleFormVisibility() {
+            const form = document.getElementById("loanerForm");
+            form.style.display = form.style.display === "none" ? "block" : "none";
+        }
+
+        // Event listener for the "Create Loaner" button
+        document.getElementById("showFormButton").addEventListener("click", function() {
+            toggleFormVisibility();
+        });
+
+        document.getElementById("loanerForm").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const name = document.getElementById("name").value;
+            const contact = document.getElementById("contact").value;
+
+            // Send a POST request to your Flask route
+            axios.post('/loaners/loaners', { name, contact })
+                .then(function (response) {
+                    alert(response.data.message);
+                    toggleFormVisibility(); // Hide the form after submission
+                })
+                .catch(function (error) {
+                    console.error(error);
+                    alert("An error occurred while creating the loaner.");
+                });
+        });
+        
     </script>
 </body>
 
