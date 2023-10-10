@@ -350,6 +350,22 @@ document.getElementById("showLoanersButton").addEventListener("click", function 
                     alert("An error occurred while creating the loaner.");
                 });
         });
+        // Function to delete a loaner by its ID
+function deleteLoaner(loanerId) {
+    if (confirm("Are you sure you want to delete this loaner?")) {
+        axios.delete(`/loaners/loaners/${loanerId}`) // Adjust the URL to match your Flask route
+            .then(function (response) {
+                // Handle successful deletion, you can update the UI as needed
+                alert(response.data.message);
+                fetchAndDisplayLoaners(); // Refresh the loaners list
+            })
+            .catch(function (error) {
+                console.error(error);
+                alert("An error occurred while deleting the loaner.");
+            });
+    }
+}
+
         
     </script>
 </body>
