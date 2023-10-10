@@ -297,7 +297,25 @@ function fetchAndDisplayLoaners() {
             alert("An error occurred while fetching loaners.");
         });
 }
+// Function to edit a loaner by its ID
+function editLoaner(loanerId, currentName, currentContact) {
+    // Prompt the user to enter new information
+    const newName = prompt("Enter the new name:", currentName);
+    const newContact = prompt("Enter the new contact:", currentContact);
 
+    if (newName !== null && newContact !== null) {
+        // Send a PUT request to your Flask route with the updated information
+        axios.put(`/loaners/loaners/${loanerId}`, { name: newName, contact: newContact })
+            .then(function (response) {
+                alert(response.data.message);
+                fetchAndDisplayLoaners(); // Refresh the loaners list
+            })
+            .catch(function (error) {
+                console.error(error);
+                alert("An error occurred while updating the loaner.");
+            });
+    }
+}
 // Event listener for the "Show All Loaners" button
 document.getElementById("showLoanersButton").addEventListener("click", function () {
     fetchAndDisplayLoaners();
