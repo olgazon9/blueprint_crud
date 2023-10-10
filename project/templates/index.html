@@ -69,6 +69,14 @@
     
     <!-- Container to display loaners -->
     <div id="loanersList" style="display: none;"></div>
+
+    <!-- Search input field and button for loaners -->
+<input type="text" id="searchLoanerName" placeholder="Enter loaner name">
+<button id="searchLoanerButton">Search Loaners</button>
+<div id="searchLoanerResults" style="display: none;">
+    <!-- This is where the loaner search results will be displayed -->
+</div>
+
     <!-- script for books  -->
     <script>
         const addBookButton = document.getElementById("addBookButton");
@@ -365,6 +373,30 @@ function deleteLoaner(loanerId) {
             });
     }
 }
+const searchLoanerButton = document.getElementById("searchLoanerButton");
+const searchLoanerResults = document.getElementById("searchLoanerResults");
+
+searchLoanerButton.addEventListener("click", function () {
+    const searchLoanerName = document.getElementById("searchLoanerName").value;
+
+    axios.get(`/loaners/search-loaners?name=${searchLoanerName}`)
+        .then(function (response) {
+            const searchResultsData = response.data.search_results;
+            const searchResultsHTML = searchResultsData.map(result => `
+                <div>
+                    <strong>Name:</strong> ${result.name}<br>
+                    <strong>Contact:</strong> ${result.contact}<br>
+                </div>
+                <hr>
+            `).join('');
+
+            searchLoanerResults.innerHTML = searchResultsHTML;
+            searchLoanerResults.style.display = "block";
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+});
 
         
     </script>
