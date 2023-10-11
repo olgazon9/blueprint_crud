@@ -80,7 +80,7 @@
 
 <!-- Form to be displayed when the button is clicked -->
 <button id="openLoanForm">Apply for a Loan</button><br>
-<button id="showAllLoans">Show All Loans</button>
+<button id="showAllLoans">Show All Loans</button><br>
 
 
     <div id="loanForm" style="display: none;">
@@ -106,7 +106,19 @@
     <ul id="loanData">
         <!-- Loan data will be displayed here -->
     </ul>
+
 </div>
+<!-- Add the "Show Late Loans" button -->
+<button id="showLateLoans">Show Late Loans</button>
+<!-- Placeholder for displaying late loans -->
+<div id="lateLoanList" style="display: none;">
+    <h2>Late Loans</h2>
+    <ul id="lateLoanData">
+        <!-- Late loan data will be displayed here -->
+    </ul>
+</div>
+
+
     <!-- script for books  -->
     <script>
         const addBookButton = document.getElementById("addBookButton");
@@ -499,16 +511,46 @@ const openButton = document.getElementById("openLoanForm");
 function handleReturn(loanId) {
     // Send a PUT request to return the book
     axios.put(`/loans/loans/${loanId}/return`)
+    .then(function(response) {
+        console.log(response.data);
+        alert("Book returned successfully!");
+        // You can refresh the loan list or update the UI as needed
+    })
+    .catch(function(error) {
+        console.error(error);
+        alert("Failed to return the book. Details: " + error.response.data.message); // Include more specific error details
+    });
+}
+// Handle the "Show Late Loans" button click event
+document.getElementById("showLateLoans").addEventListener("click", function() {
+    // Send a GET request to retrieve all late loans from the server
+    axios.get('/loans/late-loans')
         .then(function(response) {
-            console.log(response.data);
-            alert("Book returned successfully!");
-            // You can refresh the loan list or update the UI as needed
+            const lateLoanData = response.data.late_loans;
+            const lateLoanList = document.getElementById("lateLoanData");
+            lateLoanList.innerHTML = ""; // Clear previous data
+
+            if (lateLoanData.length > 0) {
+                // Use the map function to create list items for each late loan
+                lateLoanData.forEach(function(loan) {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = `Loan ID: ${loan.id}, Book ID: ${loan.book_id}, Loaner ID: ${loan.loaner_id}, Loaned Date: ${loan.loaned_date}, Due Date: ${loan.due_date}`;
+                    lateLoanList.appendChild(listItem);
+                });
+
+                // Display the list of late loans
+                document.getElementById("loanForm").style.display = "none";
+                document.getElementById("loanList").style.display = "none";
+                document.getElementById("lateLoanList").style.display = "block";
+            } else {
+                alert("No late loans found.");
+            }
         })
         .catch(function(error) {
             console.error(error);
-            alert("Failed to return the book.");
+            alert("Failed to retrieve late loans.");
         });
-}
+});
 
     </script>
 </body>
