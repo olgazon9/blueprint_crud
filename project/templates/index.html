@@ -459,20 +459,27 @@ const openButton = document.getElementById("openLoanForm");
     // Send a GET request to retrieve all loans from the server
     axios.get('/loans/loans')
         .then(function(response) {
-            const loanData = response.data.loans; // Assumes the data is structured as {'loans': [...]}
+            const loanData = response.data.loans;
             const loanList = document.getElementById("loanData");
             loanList.innerHTML = ""; // Clear previous data
 
             if (loanData.length > 0) {
                 // Use the map function to create list items for each loan
-                const loanItems = loanData.map(function(loan) {
+                loanData.forEach(function(loan) {
                     const listItem = document.createElement("li");
                     listItem.textContent = `Loan ID: ${loan.id}, Book ID: ${loan.book_id}, Loaner ID: ${loan.loaner_id}, Loaned Date: ${loan.loaned_date}, Returned Date: ${loan.returned_date || 'N/A'}`;
-                    return listItem;
-                });
-
-                // Append the list items to the loanList
-                loanItems.forEach(function(listItem) {
+                    
+                    // Create a "Return" button for each loan
+                    const returnButton = document.createElement("button");
+                    returnButton.textContent = "Return";
+                    returnButton.addEventListener("click", function() {
+                        // Handle the return action for this loan
+                        handleReturn(loan.id);
+                    });
+                    
+                    // Append the "Return" button to the list item
+                    listItem.appendChild(returnButton);
+                    
                     loanList.appendChild(listItem);
                 });
 
@@ -487,6 +494,21 @@ const openButton = document.getElementById("openLoanForm");
             alert("Failed to retrieve loans.");
         });
 });
+
+// Function to handle the return action
+function handleReturn(loanId) {
+    // Send a PUT request to return the book
+    axios.put(`/loans/loans/${loanId}/return`)
+        .then(function(response) {
+            console.log(response.data);
+            alert("Book returned successfully!");
+            // You can refresh the loan list or update the UI as needed
+        })
+        .catch(function(error) {
+            console.error(error);
+            alert("Failed to return the book.");
+        });
+}
 
     </script>
 </body>
