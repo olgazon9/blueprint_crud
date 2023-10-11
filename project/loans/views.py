@@ -44,30 +44,28 @@ def get_loan(loan_id):
 
 @loans_blueprint.route('/loans', methods=['POST'])
 def create_loan():
-    data = request.get_json()
-    book_id = data['book_id']
-    loaner_id = data['loaner_id']
+    try:
+        data = request.get_json()
+        book_id = data['book_id']
+        loaner_id = data['loaner_id']
+        loaned_date = datetime.strptime(data['loaned_date'], '%Y-%m-%d')
+        due_date = loaned_date + timedelta(days=7)
 
-    # Convert the loaned_date string to a Python date object
-    loaned_date = datetime.strptime(data['loaned_date'], '%Y-%m-%d')
+        existing_loan = Loan.query.filter_by(book_id=book_id, returned_date=None).first()
+        if existing_loan:
+            return jsonify({'error': 'Book is already loaned'}), 400
 
-    # Calculate the due date (7 days from the loaned date)
-    due_date = loaned_date + timedelta(days=7)
-
-    # Check if the book is already loaned
-    existing_loan = Loan.query.filter_by(book_id=book_id, returned_date=None).first()
-    if existing_loan:
-        return jsonify({'message': 'Book is already loaned'}), 400
-
-    new_loan = Loan(
-        book_id=book_id,
-        loaner_id=loaner_id,
-        loaned_date=loaned_date,
-        due_date=due_date  # Store the due date in the database
-    )
-    db.session.add(new_loan)
-    db.session.commit()
-    return jsonify({'message': 'Loan created successfully'}), 201
+        new_loan = Loan(
+            book_id=book_id,
+            loaner_id=loaner_id,
+            loaned_date=loaned_date,
+            due_date=due_date
+        )
+        db.session.add(new_loan)
+        db.session.commit()
+        return jsonify({'message': 'Loan created successfully'}), 201
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
 @loans_blueprint.route('/loans/<int:loan_id>', methods=['PUT'])
 def update_loan(loan_id):
