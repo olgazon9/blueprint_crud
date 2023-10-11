@@ -35,20 +35,17 @@
     <div id="bookList" style="display: none;">
         <!-- This is where the book list will be displayed -->
     </div>
-   <!-- Button to toggle search visibility -->
-   <button id="toggleSearchButton">Toggle Search</button>
+  
    </div>
-    <!-- Search form -->
-    <form id="searchForm">
-        <label for="searchQuery">Search for Books:</label>
-        <input type="text" id="searchQuery" name="q" required>
-        <button type="submit">Search</button>
-    </form>
+    
+<!-- Search form -->
+<input type="text" id="searchBookTitle" placeholder="Enter book title">
+<button id="searchBookButton">Search Books</button>
+<div id="searchBookResults" style="display: none;">
+    <!-- This is where the book search results will be displayed -->
+</div>
 
-    <div id="searchResults" style="display: none;">
-        <!-- This is where the search results will be displayed -->
-    </div>
-
+    
     <br>
     <h2>Loaners</h2> <br>
     <!-- Button to toggle the form visibility -->
@@ -224,55 +221,43 @@
                 });
         }
 
-        const toggleSearchButton = document.getElementById("toggleSearchButton");
-        const searchForm = document.getElementById("searchForm");
-        const searchResults = document.getElementById("searchResults");
+      // Function to display search results
+function displaySearchResults(results) {
+    const searchResultsElement = document.getElementById('searchBookResults');
+    searchResultsElement.style.display = 'block'; // Show the results container
 
-        let searchVisible = false; // Track the visibility state
+    // Clear any previous results
+    searchResultsElement.innerHTML = '';
 
-        // Function to toggle search visibility
-        function toggleSearch() {
-            if (searchVisible) {
-                searchForm.style.display = "none";
-                searchResults.style.display = "none";
-                toggleSearchButton.textContent = "Show Search";
-            } else {
-                searchForm.style.display = "block";
-                toggleSearchButton.textContent = "Hide Search";
-            }
-            searchVisible = !searchVisible; // Toggle the visibility state
-        }
+    // Map the results to HTML elements
+    results.map(book => {
+        const bookDiv = document.createElement('div');
+        bookDiv.innerHTML = `
+            <p><strong>Title:</strong> ${book.title}</p>
+            <p><strong>Author:</strong> ${book.author}</p>
+            <p><strong>Publication Year:</strong> ${book.publication_year}</p>
+            <p><strong>Genre:</strong> ${book.genre}</p>
+        `;
+        searchResultsElement.appendChild(bookDiv);
+    });
+}
 
-        toggleSearchButton.addEventListener("click", function () {
-            toggleSearch();
+// Add a click event listener to the search button
+document.getElementById('searchBookButton').addEventListener('click', () => {
+    const query = document.getElementById('searchBookTitle').value;
+    
+    // Make an Axios GET request to your Flask route
+    axios.get(`/books/search-books?q=${query}`)
+        .then(response => {
+            const results = response.data.search_results;
+            displaySearchResults(results);
+        })
+        .catch(error => {
+            console.error('Error:', error);
         });
+});
 
-        searchForm.addEventListener("submit", function (event) {
-            event.preventDefault();
-
-            const query = searchQuery.value;
-
-            axios.get(`books/search-books?q=${query}`)
-                .then(function (response) {
-                    const searchResultsData = response.data.search_results;
-                    const searchResultsHTML = searchResultsData.map(result => `
-                        <div>
-                            <strong>Title:</strong> ${result.title}<br>
-                            <strong>Author:</strong> ${result.author}<br>
-                            <strong>Publication Year:</strong> ${result.publication_year}<br>
-                            <strong>Genre:</strong> ${result.genre}<br>
-                        </div>
-                        <hr>
-                    `).join('');
-
-                    searchResults.innerHTML = searchResultsHTML;
-                    searchResults.style.display = "block";
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        });
-    </script>
+ </script>
     <!-- script for loaners  -->
     <script>
         // Function to fetch and display all loaners
