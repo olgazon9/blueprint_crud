@@ -79,7 +79,9 @@
 
 
 <!-- Form to be displayed when the button is clicked -->
-<button id="openLoanForm">Apply for a Loan</button>
+<button id="openLoanForm">Apply for a Loan</button><br>
+<button id="showAllLoans">Show All Loans</button>
+
 
     <div id="loanForm" style="display: none;">
         <h2>Loan Application Form</h2>
@@ -98,7 +100,13 @@
         </form>
     </div>
 
-
+<!-- Placeholder for displaying loan data -->
+<div id="loanList" style="display: none;">
+    
+    <ul id="loanData">
+        <!-- Loan data will be displayed here -->
+    </ul>
+</div>
     <!-- script for books  -->
     <script>
         const addBookButton = document.getElementById("addBookButton");
@@ -446,6 +454,40 @@ const openButton = document.getElementById("openLoanForm");
             
             form.style.display = "none";
         });
+
+        document.getElementById("showAllLoans").addEventListener("click", function() {
+    // Send a GET request to retrieve all loans from the server
+    axios.get('/loans/loans')
+        .then(function(response) {
+            const loanData = response.data.loans; // Assumes the data is structured as {'loans': [...]}
+            const loanList = document.getElementById("loanData");
+            loanList.innerHTML = ""; // Clear previous data
+
+            if (loanData.length > 0) {
+                // Use the map function to create list items for each loan
+                const loanItems = loanData.map(function(loan) {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = `Loan ID: ${loan.id}, Book ID: ${loan.book_id}, Loaner ID: ${loan.loaner_id}, Loaned Date: ${loan.loaned_date}, Returned Date: ${loan.returned_date || 'N/A'}`;
+                    return listItem;
+                });
+
+                // Append the list items to the loanList
+                loanItems.forEach(function(listItem) {
+                    loanList.appendChild(listItem);
+                });
+
+                document.getElementById("loanForm").style.display = "none";
+                document.getElementById("loanList").style.display = "block";
+            } else {
+                alert("No loans found.");
+            }
+        })
+        .catch(function(error) {
+            console.error(error);
+            alert("Failed to retrieve loans.");
+        });
+});
+
     </script>
 </body>
 
