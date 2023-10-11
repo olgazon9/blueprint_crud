@@ -65,7 +65,8 @@ def create_loan():
         db.session.commit()
         return jsonify({'message': 'Loan created successfully'}), 201
     except Exception as e:
-        return jsonify({'error': str(e)}), 400
+        return jsonify({'error': 'Invalid data or server error: ' + str(e)}), 400
+
 
 @loans_blueprint.route('/loans/<int:loan_id>', methods=['PUT'])
 def update_loan(loan_id):
