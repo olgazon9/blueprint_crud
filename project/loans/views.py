@@ -133,3 +133,16 @@ def get_late_loans():
         late_loan_list.append(late_loan_info)
 
     return jsonify({'late_loans': late_loan_list})
+
+@loans_blueprint.route('/loans/check-loan-availability', methods=['GET'])
+def check_loan_availability():
+    try:
+        book_id = request.args.get('book_id')
+        existing_loan = Loan.query.filter_by(book_id=book_id, returned_date=None).first()
+
+        if existing_loan:
+            return jsonify({'available': False})
+        else:
+            return jsonify({'available': True})
+    except Exception as e:
+        return jsonify({'error': 'Server error: ' + str(e)}), 500

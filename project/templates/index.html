@@ -448,26 +448,45 @@ const openButton = document.getElementById("openLoanForm");
             form.style.display = "none";
         });
 
+        
         const submitButton = document.getElementById("submitForm");
-        submitButton.addEventListener("click", () => {
-            const data = {
-                book_id: document.getElementById("book_id").value,
-                loaner_id: document.getElementById("loaner_id").value,
-                loaned_date: document.getElementById("loaned_date").value
-            };
+const bookIdInput = document.getElementById("book_id");
+const loanerIdInput = document.getElementById("loaner_id");
+const loanedDateInput = document.getElementById("loaned_date");
 
-            axios.post('/loans/loans', data)
-                .then(function(response) {
-                    console.log(response.data);
-                    alert("Loan application successful!");
-                })
-                .catch(function(error) {
-                    console.error(error);
-                    alert("Loan application failed.");
-                });
-            
-            form.style.display = "none";
+submitButton.addEventListener("click", () => {
+    const data = {
+        book_id: bookIdInput.value,
+        loaner_id: loanerIdInput.value,
+        loaned_date: loanedDateInput.value
+    };
+
+    // Check if the book is already loaned
+    axios.get(`/loans/loans/check-loan-availability?book_id=${data.book_id}`)
+        .then(function(response) {
+            if (response.data.available) {
+                // The book is available for loan
+                axios.post('/loans/loans', data)
+                    .then(function(response) {
+                        console.log(response.data);
+                        alert("Loan application successful!");
+                    })
+                    .catch(function(error) {
+                        console.error(error);
+                        alert("Loan application failed.");
+                    });
+            } else {
+                alert("Book is already loaned and not available for loan.");
+            }
+        })
+        .catch(function(error) {
+            console.error(error);
+            alert("Error checking book availability.");
         });
+
+    // Hide the form
+    form.style.display = "none";
+});
 
         document.getElementById("showAllLoans").addEventListener("click", function() {
     // Send a GET request to retrieve all loans from the server
