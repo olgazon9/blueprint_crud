@@ -223,20 +223,46 @@
         });
 
         // Function to edit a book
-function editBook(bookId) {
-    // Replace book information with edit form
+        function editBook(bookId) {
     const bookElement = document.querySelector(`#bookList div:nth-child(${bookId})`);
-    const book = bookElement.innerHTML;
-    bookElement.innerHTML = `
-        <div>
-          title : <input type="text" id="editTitle_${bookId}" value="${book.title}"> <br>
-           author :  <input type="text" id="editAuthor_${bookId}" value="${book.author}"> <br>
-           publication_year :  <input type="number" id="editPublicationYear_${bookId}" value="${book.publication_year}"> <br>
-           genre :  <input type="text" id="editGenre_${bookId}" value="${book.genre}">
-            <button onclick="updateBook(${bookId})">Update</button>
-        </div>
-        <hr>
-    `;
+
+    if (bookElement) {
+        // Get the current book data from the bookElement
+        const titleElement = bookElement.querySelector("strong:nth-child(1)");
+        const authorElement = bookElement.querySelector("strong:nth-child(3)");
+        const publicationYearElement = bookElement.querySelector("strong:nth-child(5)");
+        const genreElement = bookElement.querySelector("strong:nth-child(7)");
+
+        const currentTitle = titleElement.textContent.replace("Title:", "").trim();
+        const currentAuthor = authorElement.textContent.replace("Author:", "").trim();
+        const currentPublicationYear = publicationYearElement.textContent.replace("Publication Year:", "").trim();
+        const currentGenre = genreElement.textContent.replace("Genre:", "").trim();
+
+        // Create an edit form to replace the book information
+        const editFormHTML = `
+    <div>
+        <label for="editTitle">Title:</label>
+        <input type="text" id="editTitle_${bookId}" value="${currentTitle}"><br>
+        
+        <label for="editAuthor">Author:</label>
+        <input type="text" id="editAuthor_${bookId}" value="${currentAuthor}"><br>
+        
+        <label for="editPublicationYear">Publication Year:</label>
+        <input type="number" id="editPublicationYear_${bookId}" value="${currentPublicationYear}"><br>
+        
+        <label for="editGenre">Genre:</label>
+        <input type="text" id="editGenre_${bookId}" value="${currentGenre}"><br>
+        
+        <button onclick="updateBook(${bookId})">Update</button>
+    </div>
+    <hr>
+`;
+
+        // Replace the bookElement with the edit form
+        bookElement.innerHTML = editFormHTML;
+    } else {
+        console.error('Book element not found');
+    }
 }
 
 // Function to update a book
@@ -245,6 +271,7 @@ function updateBook(bookId) {
     const editAuthor = document.getElementById(`editAuthor_${bookId}`).value;
     const editPublicationYear = document.getElementById(`editPublicationYear_${bookId}`).value;
     const editGenre = document.getElementById(`editGenre_${bookId}`).value;
+
 
     const bookData = {
         title: editTitle,
