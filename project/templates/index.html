@@ -292,17 +292,37 @@ function updateBook(bookId) {
 
 
         // Function to delete a book by its ID
-        function deleteBook(bookId) {
-            axios.delete(`/books/books/${bookId}`)
-                .then(function (response) {
-                    // Book deleted successfully, refresh the book list
-                    toggleBooksButton.click(); // Simulate a click to refresh the list
-                    console.log(response.data.message);
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        }
+function deleteBook(bookId) {
+    axios.delete(`/books/books/${bookId}`)
+        .then(function (response) {
+            // Book deleted successfully, refresh the book list
+            toggleBooksButton.click(); // Simulate a click to refresh the list
+
+            // Display a success message using Toastify
+            Toastify({
+                text: "Book was deleted successfully.",
+                duration: 3000,
+                gravity: "top",
+                close: true,
+                backgroundColor: "green"
+            }).showToast();
+
+            console.log(response.data.message);
+        })
+        .catch(function (error) {
+            console.error(error);
+
+            // Display an error message using Toastify
+            Toastify({
+                text: "Failed to delete the book.",
+                duration: 3000,
+                gravity: "top",
+                close: true,
+                backgroundColor: "red"
+            }).showToast();
+        });
+}
+
 
       // Function to display search results
 function displaySearchResults(results) {
