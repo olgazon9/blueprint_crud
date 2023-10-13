@@ -223,56 +223,73 @@
         });
 
         // Function to edit a book
-        function editBook(bookId) {
-            // Replace book information with edit form
+function editBook(bookId) {
+    // Replace book information with edit form
+    const bookElement = document.querySelector(`#bookList div:nth-child(${bookId})`);
+    const book = bookElement.innerHTML;
+    bookElement.innerHTML = `
+        <div>
+          title : <input type="text" id="editTitle_${bookId}" value="${book.title}"> <br>
+           author :  <input type="text" id="editAuthor_${bookId}" value="${book.author}"> <br>
+           publication_year :  <input type="number" id="editPublicationYear_${bookId}" value="${book.publication_year}"> <br>
+           genre :  <input type="text" id="editGenre_${bookId}" value="${book.genre}">
+            <button onclick="updateBook(${bookId})">Update</button>
+        </div>
+        <hr>
+    `;
+}
+
+// Function to update a book
+function updateBook(bookId) {
+    const editTitle = document.getElementById(`editTitle_${bookId}`).value;
+    const editAuthor = document.getElementById(`editAuthor_${bookId}`).value;
+    const editPublicationYear = document.getElementById(`editPublicationYear_${bookId}`).value;
+    const editGenre = document.getElementById(`editGenre_${bookId}`).value;
+
+    const bookData = {
+        title: editTitle,
+        author: editAuthor,
+        publication_year: editPublicationYear,
+        genre: editGenre
+    };
+
+    axios.put(`/books/books/${bookId}`, bookData)
+        .then(function (response) {
+            // Update the book's information in the list
             const bookElement = document.querySelector(`#bookList div:nth-child(${bookId})`);
-            const book = bookElement.innerHTML;
+
             bookElement.innerHTML = `
-                <div>
-                  title : <input type="text" id="editTitle_${bookId}" value="${book.title}"> <br>
-                   author :  <input type="text" id="editAuthor_${bookId}" value="${book.author}"> <br>
-                   publication_year :  <input type="number" id="editPublicationYear_${bookId}" value="${book.publication_year}"> <br>
-                   genre :  <input type="text" id="editGenre_${bookId}" value="${book.genre}">
-                    <button onclick="updateBook(${bookId})">Update</button>
-                </div>
-                <hr>
+                <strong>Title:</strong> ${editTitle}<br>
+                <strong>Author:</strong> ${editAuthor}<br>
+                <strong>Publication Year:</strong> ${editPublicationYear}<br>
+                <strong>Genre:</strong> ${editGenre}<br>
+                <button onclick="deleteBook(${bookId})">Delete</button>
+                <button onclick="editBook(${bookId})">Edit</button>
             `;
-        }
 
-        // Function to update a book
-        function updateBook(bookId) {
-            const editTitle = document.getElementById(`editTitle_${bookId}`).value;
-            const editAuthor = document.getElementById(`editAuthor_${bookId}`).value;
-            const editPublicationYear = document.getElementById(`editPublicationYear_${bookId}`).value;
-            const editGenre = document.getElementById(`editGenre_${bookId}`).value;
+            // Display a success message using Toastify
+            Toastify({
+                text: "Book was updated successfully.",
+                duration: 3000,
+                gravity: "top",
+                close: true,
+                backgroundColor: "green"
+            }).showToast();
+        })
+        .catch(function (error) {
+            console.error(error);
 
-            const bookData = {
-                title: editTitle,
-                author: editAuthor,
-                publication_year: editPublicationYear,
-                genre: editGenre
-            };
+            // Display an error message using Toastify
+            Toastify({
+                text: "Failed to update the book.",
+                duration: 3000,
+                gravity: "top",
+                close: true,
+                backgroundColor: "red"
+            }).showToast();
+        });
+}
 
-            axios.put(`/books/books/${bookId}`, bookData)
-                .then(function (response) {
-                    // Update the book's information in the list
-                    const bookElement = document.querySelector(`#bookList div:nth-child(${bookId})`);
-
-                    bookElement.innerHTML = `
-                        <strong>Title:</strong> ${editTitle}<br>
-                        <strong>Author:</strong> ${editAuthor}<br>
-                        <strong>Publication Year:</strong> ${editPublicationYear}<br>
-                        <strong>Genre:</strong> ${editGenre}<br>
-                        <button onclick="deleteBook(${bookId})">Delete</button>
-                        <button onclick="editBook(${bookId})">Edit</button>
-                    `;
-
-                    console.log(response.data.message);
-                })
-                .catch(function (error) {
-                    console.error(error);
-                });
-        }
 
         // Function to delete a book by its ID
         function deleteBook(bookId) {
