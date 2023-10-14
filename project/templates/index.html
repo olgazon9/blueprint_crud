@@ -390,6 +390,16 @@ document.getElementById('searchBookButton').addEventListener('click', () => {
  </script>
     <!-- script for loaners  -->
     <script>
+        function showToast(message, type) {
+    Toastify({
+        text: message,
+        duration: 3000, // Display duration in milliseconds (3 seconds in this example)
+        gravity: "top", // Notification position (top, middle, or bottom)
+        close: true, // Display a close button
+        backgroundColor: type === 'success' ? 'green' : 'red', // Background color based on notification type
+    }).showToast();
+}
+
         // Function to fetch and display all loaners
 function fetchAndDisplayLoaners() {
     axios.get('/loaners/loaners') // Adjust the URL to match your Flask route
@@ -430,12 +440,12 @@ function editLoaner(loanerId, currentName, currentContact) {
         // Send a PUT request to your Flask route with the updated information
         axios.put(`/loaners/loaners/${loanerId}`, { name: newName, contact: newContact })
             .then(function (response) {
-                alert(response.data.message);
+                showToast("Operation completed successfully", "success");
                 fetchAndDisplayLoaners(); // Refresh the loaners list
             })
             .catch(function (error) {
                 console.error(error);
-                alert("An error occurred while updating the loaner.");
+                showToast("Failed to add the book.", 'error');
             });
     }
 }
@@ -465,12 +475,12 @@ document.getElementById("showLoanersButton").addEventListener("click", function 
             // Send a POST request to your Flask route
             axios.post('/loaners/loaners', { name, contact })
                 .then(function (response) {
-                    alert(response.data.message);
+                    showToast("Operation completed successfully", "success");
                     toggleFormVisibility(); // Hide the form after submission
                 })
                 .catch(function (error) {
                     console.error(error);
-                    alert("An error occurred while creating the loaner.");
+                    showToast("Failed to add the book.", 'error');
                 });
         });
         // Function to delete a loaner by its ID
@@ -479,12 +489,12 @@ function deleteLoaner(loanerId) {
         axios.delete(`/loaners/loaners/${loanerId}`) // Adjust the URL to match your Flask route
             .then(function (response) {
                 // Handle successful deletion, you can update the UI as needed
-                alert(response.data.message);
+                showToast("Operation completed successfully", "success");
                 fetchAndDisplayLoaners(); // Refresh the loaners list
             })
             .catch(function (error) {
                 console.error(error);
-                alert("An error occurred while deleting the loaner.");
+                showToast("An error occurred", "error");
             });
     }
 }
@@ -552,19 +562,19 @@ submitButton.addEventListener("click", () => {
                 axios.post('/loans/loans', data)
                     .then(function(response) {
                         console.log(response.data);
-                        alert("Loan application successful!");
+                        showToast("Operation completed successfully", "success");
                     })
                     .catch(function(error) {
                         console.error(error);
-                        alert("Loan application failed.");
+                        showToast("An error occurred", "error");
                     });
             } else {
-                alert("Book is already loaned and not available for loan.");
+                showToast("Book is already loaned and not available for loan.", "error");
             }
         })
         .catch(function(error) {
             console.error(error);
-            alert("Error checking book availability.");
+            showToast( " Error cahecking book avialability", "error");
         });
 
     // Hide the form
@@ -622,12 +632,12 @@ function handleReturn(loanId) {
     axios.put(`/loans/loans/${loanId}/return`)
     .then(function(response) {
         console.log(response.data);
-        alert("Book returned successfully!");
+        showToast("Operation completed successfully", "success");
         // You can refresh the loan list or update the UI as needed
     })
     .catch(function(error) {
         console.error(error);
-        alert("Failed to return the book. Details: " + error.response.data.message); // Include more specific error details
+        showToast("An error occurred", "error");
     });
 }
 // Handle the "Show Late Loans" button click event
