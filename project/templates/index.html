@@ -527,6 +527,14 @@ searchLoanerButton.addEventListener("click", function () {
     </script>
     <!-- script for loanes  -->
     <script>
+                function showToast(message, type) {
+    Toastify({
+        text: message,
+        duration: 3000, // Display duration in milliseconds (3 seconds in this example)
+        gravity: "top", // Notification position (top, middle, or bottom)
+        close: true, // Display a close button
+        backgroundColor: type === 'success' ? 'green' : 'red', // Background color based on notification type
+    }).showToast();
 
 const openButton = document.getElementById("openLoanForm");
         const form = document.getElementById("loanForm");
