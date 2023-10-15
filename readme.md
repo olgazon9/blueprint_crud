@@ -64,9 +64,9 @@ Visit http://localhost:yourport in your web browser to access the Book Library A
 You can manage books, loaners, and loans through the provided web interface.
 
 ### API Endpoints
-/books: Endpoints for managing books.
-/loaners: Endpoints for managing loaners.
-/loans: Endpoints for managing loans.
+/books/books: Endpoints for managing books.
+/loaners/loaners: Endpoints for managing loaners.
+/loans/loans: Endpoints for managing loans.
 For detailed API documentation and available endpoints, please refer to the API documentation.
 
 
