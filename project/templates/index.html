@@ -124,6 +124,15 @@
 
     <!-- script for books  -->
     <script>
+         
+         function showToast(message, type) {
+    Toastify({
+        text: message,
+        duration: 3000, // Display duration in milliseconds (3 seconds in this example)
+        gravity: "top", // Notification position (top, middle, or bottom)
+        close: true, // Display a close button
+        backgroundColor: type === 'success' ? 'green' : 'red', // Background color based on notification type
+    }).showToast();}
         const addBookButton = document.getElementById("addBookButton");
         const bookFormContainer = document.getElementById("bookFormContainer");
 
@@ -387,18 +396,10 @@ document.getElementById('searchBookButton').addEventListener('click', () => {
         });
 });
 
- </script>
-    <!-- script for loaners  -->
-    <script>
-        function showToast(message, type) {
-    Toastify({
-        text: message,
-        duration: 3000, // Display duration in milliseconds (3 seconds in this example)
-        gravity: "top", // Notification position (top, middle, or bottom)
-        close: true, // Display a close button
-        backgroundColor: type === 'success' ? 'green' : 'red', // Background color based on notification type
-    }).showToast();
-}
+ 
+   //Script For Loaners
+    
+
 
         // Function to fetch and display all loaners
 function fetchAndDisplayLoaners() {
@@ -524,17 +525,9 @@ searchLoanerButton.addEventListener("click", function () {
 });
 
         
-    </script>
-    <!-- script for loanes  -->
-    <script>
-                function showToast(message, type) {
-    Toastify({
-        text: message,
-        duration: 3000, // Display duration in milliseconds (3 seconds in this example)
-        gravity: "top", // Notification position (top, middle, or bottom)
-        close: true, // Display a close button
-        backgroundColor: type === 'success' ? 'green' : 'red', // Background color based on notification type
-    }).showToast();
+    
+   // <!-- script for loanes  -->
+   
 
 const openButton = document.getElementById("openLoanForm");
         const form = document.getElementById("loanForm");
